@@ -1,0 +1,4 @@
+project 
+    : usage-requirements <include>. ;
+
+lib core : *.cpp : <link>static ;
