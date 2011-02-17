@@ -13,7 +13,7 @@
 #include <map>
 #include <timemanager.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Action;
 

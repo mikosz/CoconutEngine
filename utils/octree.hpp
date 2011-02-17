@@ -12,7 +12,7 @@
 #include "utils/vector.hpp"
 #include "utils/fulltree.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 template <class Element>
 class Octree {
@@ -52,6 +52,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* OCTREE_HPP_ */

@@ -7,7 +7,7 @@
 
 #include <log.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 namespace
 {

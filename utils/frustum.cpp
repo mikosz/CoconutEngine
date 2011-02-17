@@ -7,7 +7,7 @@
 
 #include <frustum.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Frustum::Frustum(const Plane& near, const Plane& far, const Plane& top, const Plane& bottom, const Plane& left,
         const Plane& right) :

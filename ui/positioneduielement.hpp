@@ -11,7 +11,7 @@
 #include <uielement.hpp>
 #include <rectangle.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;

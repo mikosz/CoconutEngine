@@ -10,23 +10,20 @@
 
 #include <vector>
 
-#include "graphics/sceneelement.hpp"
+#include <boost/shared_ptr.hpp>
+
+#include "sceneelement.hpp"
 #include "vector.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
+
+class Terrain;
+class Camera;
 
 class TerrainPatch : public SceneElement {
 public:
 
-    TerrainPatch(Terrain& terrain) :
-        terrain_(terrain) {
-    }
-
-    void render() const;
-
-private:
-
-    struct TerrainVertex {
+    struct Vertex {
 
         Vec3D position;
 
@@ -34,12 +31,24 @@ private:
 
     };
 
-    Terrain& terrain_;
+    static boost::shared_ptr<TerrainPatch> create(const Terrain& terrain);
 
-    std::vector<TerrainVertex> vertices_;
+    void doRender(const Camera& camera) const;
+
+    void addVertex(const Vertex& vertex);
+
+private:
+
+    const Terrain& terrain_;
+
+    std::vector<Vertex> vertices_;
+
+    TerrainPatch(const Terrain& terrain);
+
+    size_t lod(const Camera& camera) const;
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* TERRAINPATCH_HPP_ */

@@ -7,7 +7,7 @@
 
 #include <actor.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Actor::~Actor() {
 

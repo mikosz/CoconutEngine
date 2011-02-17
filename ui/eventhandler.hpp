@@ -18,7 +18,7 @@
 #include <boost/noncopyable.hpp>
 #include <rectangle.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 typedef size_t EventId;
 
@@ -153,6 +153,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* EVENTHANDLER_HPP_ */

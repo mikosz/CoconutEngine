@@ -8,7 +8,7 @@
 #ifndef UTILITY_HPP_
 #define UTILITY_HPP_
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 const float PI = 3.14159265f;

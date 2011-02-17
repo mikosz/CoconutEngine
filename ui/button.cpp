@@ -11,7 +11,7 @@
 #include <eventhandler.hpp>
 #include <boost/bind.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Button::Button(const Settings<std::string>& settings, const std::string& prefix) :
     PositionedUiElement(settings, prefix)

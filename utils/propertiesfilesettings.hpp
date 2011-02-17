@@ -13,7 +13,7 @@
 #include <loki/AssocVector.h>
 #include <settings.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class PropertiesFileSettings : public Settings<std::string>

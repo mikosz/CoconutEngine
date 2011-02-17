@@ -8,36 +8,15 @@
 #ifndef LIGHT_HPP_
 #define LIGHT_HPP_
 
+#include <GL/gl.h>
+
 #include <colour.hpp>
 #include <vector.hpp>
-#include <vector>
+#include <valarray>
 #include <string>
 #include <boost/noncopyable.hpp>
 
-namespace CoconutEngine {
-
-namespace Light_ {
-
-class LightRegistry : boost::noncopyable {
-public:
-
-    char allocate();
-
-    void free(char id);
-
-    static LightRegistry& instance();
-
-private:
-
-    static LightRegistry* instance_;
-
-    LightRegistry();
-
-    std::vector<bool> usage_;
-
-};
-
-} // namespace Light_
+namespace coconutengine {
 
 template<class > class Settings;
 
@@ -66,10 +45,10 @@ private:
 
     bool on_;
 
-    unsigned int lightId();
+    GLenum lightId();
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* LIGHT_HPP_ */

@@ -7,7 +7,7 @@
 
 #include <plane.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Plane::Plane(float a, float b, float c, float d) :
     a(a),

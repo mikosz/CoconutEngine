@@ -10,7 +10,7 @@
 #include <settings.hpp>
 #include <eventhandler.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 // TODO: change videomode parms?
 Window::Window(const Settings<std::string>& settings, const std::string& prefix)

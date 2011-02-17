@@ -13,7 +13,7 @@
 #include "sceneelement.hpp"
 #include "octree.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Scene {
 
@@ -31,6 +31,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* SCENE_HPP_ */

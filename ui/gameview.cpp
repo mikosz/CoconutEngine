@@ -17,7 +17,9 @@
 #include <cameramoveaction.hpp>
 #include <graphics.hpp>
 
-using namespace CoconutEngine;
+#include "renderpipeline.hpp"
+
+using namespace coconutengine;
 
 namespace {
 
@@ -36,13 +38,19 @@ Vec3D getDirection(const SDL_Event& event) {
     case SDLK_d:
         direction.x() = 1.0f;
         break;
+    case SDLK_EQUALS:
+        direction.z() = -1.0f;
+        break;
+    case SDLK_MINUS:
+        direction.z() = 1.0f;
+        break;
     default:
         assert(false);
     }
     return direction;
 }
 
-}
+} // anonymous namespace
 
 GameView::GameView(Game& game, const Settings<std::string>& settings, const std::string& prefix) :
     PositionedUiElement(settings, prefix), game_(game), camera_(settings, prefix + ".camera"), wireframe_(getSetting<
@@ -83,6 +91,16 @@ GameView::GameView(Game& game, const Settings<std::string>& settings, const std:
     cameraStopMoveRightEventId_
             = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(new KeyboardEventType(
                     KeyboardEventType::KEY_UP, SDLK_d)), boost::bind(&GameView::cameraStopMove, this, _1));
+    cameraStartZoomInEventId_ = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(
+            new KeyboardEventType(KeyboardEventType::KEY_DOWN, SDLK_EQUALS)), cameraStartMoveCallback);
+    cameraStopZoomInEventId_ = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(
+            new KeyboardEventType(KeyboardEventType::KEY_UP, SDLK_EQUALS)), boost::bind(
+            &GameView::cameraStopMove, this, _1));
+    cameraStartZoomOutEventId_ = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(
+            new KeyboardEventType(KeyboardEventType::KEY_DOWN, SDLK_MINUS)), cameraStartMoveCallback);
+    cameraStopZoomOutEventId_ = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(
+            new KeyboardEventType(KeyboardEventType::KEY_UP, SDLK_MINUS)), boost::bind(
+            &GameView::cameraStopMove, this, _1));
 }
 
 GameView::~GameView() {
@@ -100,12 +118,19 @@ void GameView::render() const {
         Graphics::instance().drawWireframe();
     }
     camera_.setupPerspective(Core::instance().window().aspectRatio());
-    game_.render(camera_);
+    game_.sun().off();
+    game_.sun().on();
+    RenderPipeline::instance().render(camera_);
 }
 
 bool GameView::cameraStartFreeMove(const SDL_Event& event) {
     SET_LOG_CONTEXT("GameView::cameraStartFreeMove");
     LOG_DEBUG   << "Camera free move starts" << LOG_END;
+
+    SDL_ShowCursor(false);
+    grabMode_ = SDL_WM_GrabInput(SDL_GRAB_QUERY);
+    SDL_GetMouseState(&mousePosition_.x(), &mousePosition_.y());
+    SDL_WM_GrabInput(SDL_GRAB_ON);
 
     EventHandler::instance().addCallbackLayer();
 
@@ -123,6 +148,10 @@ bool GameView::cameraStopFreeMove(const SDL_Event& event) {
     LOG_DEBUG   << "Camera free move stops" << LOG_END;
 
     EventHandler::instance().deleteCallbackLayer();
+
+    SDL_WM_GrabInput(grabMode_);
+    SDL_WarpMouse(mousePosition_.x(), mousePosition_.y());
+    SDL_ShowCursor(true);
 
     return true;
 }

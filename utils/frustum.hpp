@@ -13,7 +13,7 @@
 #include <rectangle.hpp>
 #include <vector>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Frustum {
 public:
@@ -47,6 +47,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* FRUSTUM_HPP_ */

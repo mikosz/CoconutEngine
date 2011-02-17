@@ -8,9 +8,10 @@
 #ifndef HEIGHTMAP_HPP_
 #define HEIGHTMAP_HPP_
 
+#include "matrix.hpp"
 #include "vector.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Bitmap;
 
@@ -29,7 +30,7 @@ public:
 
     HeightMap(const Settings<std::string>& settings, const std::string& prefix);
 
-    const Container& heightMap() const {
+    Container& data() {
         return heightMap_;
     }
 
@@ -37,12 +38,20 @@ private:
 
     void setupHeightMap(const Settings<std::string>& settings, const std::string& prefix);
 
-    float scale_;
+    void setupNormals(size_t scale);
 
+    /**
+     * heightMap_[0][0] is the top left corner of the map
+     * heightMap_[height - 1][0] is at the (0, 0) point
+     */
     Container heightMap_;
+
+    size_t height_;
+
+    size_t width_;
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* HEIGHTMAP_HPP_ */

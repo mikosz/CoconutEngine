@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;
@@ -18,6 +18,10 @@ template <class> class Settings;
 class Colour
 {
 public:
+
+    static const Colour WHITE;
+
+    static const Colour BLACK;
 
     Colour(float red, float green, float blue, float alpha);
 

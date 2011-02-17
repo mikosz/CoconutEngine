@@ -15,7 +15,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 struct LogLevel
@@ -115,10 +115,10 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #define SET_LOG_LEVEL(level__)                                  \
-    CoconutEngine::Log::instance()                              \
+    coconutengine::Log::instance()                              \
         .setLogLevel(level__)
 
 const char LOG_CONTEXT__[] = "NO_CONTEXT";
@@ -128,7 +128,7 @@ const char LOG_CONTEXT__[] = "NO_CONTEXT";
 
 #define LOG(level__, levelString__)                             \
     {                                                           \
-        if(CoconutEngine::Log::instance()                       \
+        if(coconutengine::Log::instance()                       \
             .getLogLevel() <= level__)                          \
         {                                                       \
             std::stringstream LOG_STREAM;                       \
@@ -137,7 +137,7 @@ const char LOG_CONTEXT__[] = "NO_CONTEXT";
 
 #define LOG_END                                                 \
             '\n';                                               \
-            CoconutEngine::Log::instance()                      \
+            coconutengine::Log::instance()                      \
                 .getOutputStream() <<                           \
                 LOG_STREAM.str();                               \
         }                                                       \

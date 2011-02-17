@@ -9,7 +9,7 @@
 
 #include <GL/gl.h>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Graphics* Graphics::instance_ = 0;
 
@@ -25,7 +25,6 @@ Graphics::Graphics() {
 
 void Graphics::initEngine() {
     glEnable(GL_LIGHTING);
-    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
 }

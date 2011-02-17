@@ -11,7 +11,7 @@
 #include <eventhandler.hpp>
 #include <timemanager.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class UiElement

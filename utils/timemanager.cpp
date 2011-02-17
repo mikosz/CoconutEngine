@@ -10,7 +10,7 @@
 #include <settings.hpp>
 #include <utility.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 namespace {
 

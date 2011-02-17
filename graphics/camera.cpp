@@ -13,7 +13,7 @@
 #include <utility.hpp>
 #include <cmath>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 namespace
 {

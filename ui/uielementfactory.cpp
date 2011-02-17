@@ -7,7 +7,7 @@
 
 #include <uielementfactory.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 UiElementFactory* UiElementFactory::instance_ = 0;
 

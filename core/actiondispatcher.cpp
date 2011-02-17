@@ -8,7 +8,7 @@
 #include <actiondispatcher.hpp>
 #include <action.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 ActionDispatcher* ActionDispatcher::instance_ = 0;
 

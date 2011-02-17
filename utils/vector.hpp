@@ -8,56 +8,131 @@
 #ifndef VECTOR_HPP_
 #define VECTOR_HPP_
 
+#include <iosfwd>
 #include <string>
+#include <cassert>
+
 #include <boost/operators.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/storage.hpp>
+
 #include <settings.hpp>
 
-namespace ublas = boost::numeric::ublas;
-
-namespace CoconutEngine {
+namespace coconutengine {
 
 /**
  * General fixed-size (D dimensions) vector type, with elements of type T.
  */
 template<size_t D, class T = float>
-class Vector : public ublas::bounded_vector<T, D> {
-private:
-
-    typedef ublas::bounded_vector<T, D> Super;
-
+class Vector: public boost::arithmetic<Vector<D, T> >,
+        public boost::arithmetic<Vector<D, T> , T>,
+        public boost::totally_ordered<Vector<D, T> > {
 public:
 
-    typedef typename Super::size_type size_type;
-
-    Vector<D, T>() : Super(D) {
+    Vector() {
     }
 
-    Vector<D, T>(const Vector<D, T>& v) : Super(v) {
+    template<class T2>
+    Vector(const Vector<D, T2>& rhs) {
+        for (size_t i = 0; i < D; ++i) {
+            data_[i] = rhs[i];
+        }
     }
 
-    template<class ExpressionType>
-    Vector<D, T>(const ublas::vector_expression<ExpressionType>& expression) :
-    Super(expression) {
+    template<class T2>
+    Vector& operator=(const Vector<D, T2>& rhs) {
+        for (size_t i = 0; i < D; ++i) {
+            data_[i] = rhs[i];
+        }
+        return *this;
+    }
+
+    T& operator[](size_t i) {
+        return get(i);
+    }
+
+    const T& operator[](size_t i) const {
+        return get(i);
+    }
+
+    Vector operator-() const {
+        Vector v(*this);
+        v *= -1;
+        return v;
+    }
+
+    Vector& operator+=(const Vector& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) += v.get(i);
+        }
+        return *this;
+    }
+
+    Vector& operator-=(const Vector& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) -= v.get(i);
+        }
+        return *this;
+    }
+
+    Vector& operator*=(const Vector& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) *= v.get(i);
+        }
+        return *this;
+    }
+
+    Vector& operator/=(const Vector& v) {
+        for (size_t i = 0; i < D; ++i) {
+            assert(v.get(i));
+            get(i) /= v.get(i);
+        }
+        return *this;
+    }
+
+    Vector& operator+=(const T& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) += v;
+        }
+        return *this;
+    }
+
+    Vector& operator-=(const T& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) -= v;
+        }
+        return *this;
+    }
+
+    Vector& operator*=(const T& v) {
+        for (size_t i = 0; i < D; ++i) {
+            get(i) *= v;
+        }
+        return *this;
+    }
+
+    Vector& operator/=(const T& v) {
+        assert(v);
+        for (size_t i = 0; i < D; ++i) {
+            get(i) /= v;
+        }
+        return *this;
     }
 
     /**
      * Lexical order.
      */
-    bool operator <(const Vector<D, T>& v) const {
-        for (size_type i = 0; i < D; ++i) {
+    bool operator<(const Vector<D, T>& v) const {
+        for (size_t i = 0; i < D; ++i) {
             if (get(i) < v.get(i)) {
                 return true;
-            } else if (v.get(i) < get(i)) {
+            } else if (get(i) < get(i)) {
                 return false;
             }
         }
         return false;
     }
 
-    bool operator ==(const Vector<D, T>& v) const {
-        for (size_type i = 0; i < D; ++i) {
+    bool operator==(const Vector<D, T>& v) const {
+        for (size_t i = 0; i < D; ++i) {
             if (get(i) != v.get(i)) {
                 return false;
             }
@@ -70,7 +145,7 @@ public:
      */
     T length() const {
         T result = 0;
-        for (size_type i = 0; i < D; ++i) {
+        for (size_t i = 0; i < D; ++i) {
             result += get(i) * get(i);
         }
         return sqrt(result);
@@ -89,22 +164,49 @@ public:
     Vector<D, T>& normalise() {
         T l = length();
         if (l) {
-            this->operator /=(l);
+            (*this) /= (l);
         }
         return *this;
     }
 
 protected:
 
-    T& get(size_type i) {
-        return this->operator [](i);
+    T& get(size_t i) {
+        assert(i < D);
+        return data_[i];
     }
 
-    const T& get(size_type i) const {
-        return this->operator [](i);
+    const T& get(size_t i) const {
+        assert(i < D);
+        return data_[i];
     }
+
+    T* data() {
+        return data_;
+    }
+
+    const T* data() const {
+        return data_;
+    }
+
+private:
+
+    T data_[D];
 
 };
+
+template <size_t D, class T>
+std::ostream& operator<<(std::ostream& os, const Vector<D, T>& vector) {
+    os << '[';
+    for (size_t i = 0; i < D; ++i) {
+        if (i) {
+            os << ", ";
+        }
+        os << vector[i];
+    }
+    os << ']';
+    return os;
+}
 
 /**
  * 3D version of the Vector. Extends the base type by the cross product function, and
@@ -117,52 +219,65 @@ public:
     Vector3D() {
     }
 
-    Vector3D(T x, T y, T z) {
-        this->get(0) = x;
-        this->get(1) = y;
-        this->get(2) = z;
+    template<class T2, class T3, class T4>
+    Vector3D(T2 x, T3 y, T4 z) {
+        get(0) = x;
+        get(1) = y;
+        get(2) = z;
     }
 
     Vector3D(const Settings<std::string>& settings, const std::string& prefix) {
-        this->get(0) = getSetting<T>(settings, prefix + ".x");
-        this->get(1) = getSetting<T>(settings, prefix + ".y");
-        this->get(2) = getSetting<T>(settings, prefix + ".z");
+        get(0) = getSetting<T>(settings, prefix + ".x");
+        get(1) = getSetting<T>(settings, prefix + ".y");
+        get(2) = getSetting<T>(settings, prefix + ".z");
     }
 
-    Vector3D(const Vector3D& v) : Vector<3, T>(v) {
-    }
-
-    template<class ExpressionType>
-    Vector3D(const ublas::vector_expression<ExpressionType>& expression) : Vector<3, T>(expression) {
+    template <class T2>
+    Vector3D(const Vector<3, T2>& rhs) : Vector<3, T>(rhs) {
     }
 
     T& x() {
-        return this->get(0);
+        return get(0);
     }
 
     const T& x() const {
-        return this->get(0);
+        return get(0);
     }
 
     T& y() {
-        return this->get(1);
+        return get(1);
     }
 
     const T& y() const {
-        return this->get(1);
+        return get(1);
     }
 
     T& z() {
-        return this->get(2);
+        return get(2);
     }
 
     const T& z() const {
-        return this->get(2);
+        return get(2);
     }
 
     Vector3D crossProduct(const Vector3D& rhs) const {
-        return Vector3D(y() * rhs.z() - z() * rhs.y(), z() * rhs.x() - x() * rhs.z(), x() * rhs.y() - y() * rhs.x());
+        return Vector3D(y() * rhs.z() - z() * rhs.y(), z() * rhs.x() - x() * rhs.z(), x() * rhs.y() - y()
+                * rhs.x());
     }
+
+    T* toXYZ() {
+        return data();
+    }
+
+    const T* toXYZ() const {
+        return data();
+    }
+
+protected:
+
+    using Vector<3, T>::get;
+
+    using Vector<3, T>::data;
 
 };
 
@@ -181,38 +296,56 @@ public:
     Vector2D() {
     }
 
-    Vector2D<T>(T x, T y) {
-        this->get(0) = x;
-        this->get(1) = y;
+    template<class T2, class T3>
+    Vector2D(T2 x, T3 y) {
+        get(0) = x;
+        get(1) = y;
+    }
+
+    template<class T2, class T3>
+    Vector2D(const std::pair<T2, T3>& p) {
+        get(0) = p.first;
+        get(1) = p.second;
     }
 
     Vector2D(const Settings<std::string>& settings, const std::string& prefix) {
-        this->get(0) = getSetting<T>(settings, prefix + ".x");
-        this->get(1) = getSetting<T>(settings, prefix + ".y");
+        get(0) = getSetting<T>(settings, prefix + ".x");
+        get(1) = getSetting<T>(settings, prefix + ".y");
     }
 
-    Vector2D(const Vector2D& v) : Vector<2, T>(v) {
-    }
-
-    template<class ExpressionType>
-    Vector2D(const ublas::vector_expression<ExpressionType>& expression) : Vector<2, T>(expression) {
+    template <class T2>
+    Vector2D(const Vector<2, T2>& rhs) : Vector<2, T>(rhs) {
     }
 
     T& x() {
-        return this->get(0);
+        return get(0);
     }
 
     const T& x() const {
-        return this->get(0);
+        return get(0);
     }
 
     T& y() {
-        return this->get(1);
+        return get(1);
     }
 
     const T& y() const {
-        return this->get(1);
+        return get(1);
     }
+
+    T* toXY() {
+        return data();
+    }
+
+    const T* toXY() const {
+        return data();
+    }
+
+protected:
+
+    using Vector<2, T>::get;
+
+    using Vector<2, T>::data;
 
 };
 
@@ -221,6 +354,6 @@ public:
  */
 typedef Vector2D<float> Vec2D;
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* VECTOR_HPP_ */

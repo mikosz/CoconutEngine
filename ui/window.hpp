@@ -11,7 +11,7 @@
 #include <log.hpp>
 #include <SDL/SDL.h>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;
@@ -50,6 +50,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* WINDOW_HPP_ */

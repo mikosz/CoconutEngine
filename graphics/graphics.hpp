@@ -12,7 +12,7 @@
 #include <colour.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Graphics : boost::noncopyable
@@ -37,6 +37,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* GRAPHICS_HPP_ */

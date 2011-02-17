@@ -17,7 +17,7 @@
 #include <accelerationaction.hpp>
 #include <cameramoveaction.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 template<class > class Settings;
 class Game;
@@ -71,6 +71,14 @@ private:
 
     EventId cameraZoomOutEventId_;
 
+    EventId cameraStartZoomInEventId_;
+
+    EventId cameraStopZoomInEventId_;
+
+    EventId cameraStartZoomOutEventId_;
+
+    EventId cameraStopZoomOutEventId_;
+
     ActionId cameraMoveActionId_;
 
     boost::shared_ptr<CameraMoveAction> cameraMoveAction_;
@@ -89,8 +97,20 @@ private:
 
     bool cameraZoomOut(const SDL_Event& event);
 
+    bool cameraStartZoomIn(const SDL_Event& event);
+
+    bool cameraStopZoomIn(const SDL_Event& event);
+
+    bool cameraStartZoomOut(const SDL_Event& event);
+
+    bool cameraStopZoomOut(const SDL_Event& event);
+
+    Vector2D<int> mousePosition_;
+
+    SDL_GrabMode grabMode_;
+
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* GAMEVIEW_HPP_ */

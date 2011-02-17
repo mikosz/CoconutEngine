@@ -14,7 +14,7 @@
 #include <map.hpp>
 #include <light.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;
@@ -32,7 +32,7 @@ public:
 
     const Map& map() const { return map_; }
 
-    void render(const Camera& camera) const;
+    Light& sun() { return sun_; }
 
 private:
 

@@ -10,7 +10,7 @@
 
 #include <action.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 template<class > class Settings;
 

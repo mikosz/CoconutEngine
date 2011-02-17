@@ -11,7 +11,7 @@
 #include <boost/call_traits.hpp>
 #include <boost/any.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class Key>
@@ -45,6 +45,6 @@ inline ResultType getSetting(const Settings<KeyType>& settings,
     return boost::any_cast<ResultType>(settings.get(key, defaultValue));
 }
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* SETTINGS_HPP_ */

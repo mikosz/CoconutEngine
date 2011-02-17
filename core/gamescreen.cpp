@@ -9,7 +9,7 @@
 #include <graphics.hpp>
 #include <core.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 GameScreen::GameScreen(const Settings<std::string>& settings, const std::string& prefix) :
     game_(settings, prefix + ".game"), gameView_(game_, settings, prefix + ".game_view") {

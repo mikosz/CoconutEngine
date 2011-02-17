@@ -7,42 +7,70 @@
 
 #include <light.hpp>
 
-#include <GL/gl.h>
 #include <algorithm>
 #include <cassert>
 #include <stdexcept>
-#include <settings.hpp>
 
-using namespace CoconutEngine;
+#include <iostream>
 
-Light_::LightRegistry* Light_::LightRegistry::instance_ = 0;
+#include "settings.hpp"
 
-Light_::LightRegistry& Light_::LightRegistry::instance() {
+using namespace coconutengine;
+
+namespace {
+
+class LightRegistry : boost::noncopyable {
+public:
+
+    static LightRegistry& instance();
+
+    char allocate();
+
+    void free(char id);
+
+private:
+
+    static LightRegistry* instance_;
+
+    LightRegistry();
+
+    std::valarray<bool> usage_;
+
+};
+
+LightRegistry* LightRegistry::instance_ = 0;
+
+LightRegistry& LightRegistry::instance() {
     if (!instance_) {
-        instance_ = new Light_::LightRegistry();
+        instance_ = new LightRegistry();
     }
     return *instance_;
 }
 
-Light_::LightRegistry::LightRegistry() :
-    usage_(8, false) {
+LightRegistry::LightRegistry() :
+    usage_(false, 8) {
 }
 
-char Light_::LightRegistry::allocate() {
+char LightRegistry::allocate() {
+    glEnable(GL_LIGHTING);
     for (size_t i = 0; i < usage_.size(); ++i) {
         if (!usage_[i]) {
             usage_[i] = true;
             return i;
         }
     }
-    // TODO: throw exception here
-    throw "";
+    throw std::runtime_error("Too many lights lit");
 }
 
-void Light_::LightRegistry::free(char id) {
+void LightRegistry::free(char id) {
     assert(usage_[id]);
     usage_[id] = false;
+    if (!usage_.max()) {
+        glDisable(GL_LIGHTING);
+    }
 }
+
+}  // anonymous namespace
 
 Light::Light(const Settings<std::string>& settings_, const std::string& prefix) :
     positional_(getSetting<bool> (settings_, prefix + ".positional")), ambientColour_(settings_, prefix + ".ambient"),
@@ -52,8 +80,9 @@ Light::Light(const Settings<std::string>& settings_, const std::string& prefix) 
 
 void Light::on() {
     if (!on_) {
-        id_ = Light_::LightRegistry::instance().allocate();
-        unsigned int light = lightId();
+        on_ = true;
+        id_ = LightRegistry::instance().allocate();
+        GLenum light = lightId();
 
         glEnable(light);
         GLfloat lightDir[] = { position_.x(), position_.y(), position_.z(), positional_ };
@@ -67,12 +96,13 @@ void Light::on() {
 
 void Light::off() {
     if (on_) {
-        Light_::LightRegistry::instance().free(id_);
+        LightRegistry::instance().free(id_);
         glDisable(lightId());
+        on_ = false;
     }
 }
 
-unsigned int Light::lightId() {
+GLenum Light::lightId() {
     switch (id_) {
     case 0:
         return GL_LIGHT0;

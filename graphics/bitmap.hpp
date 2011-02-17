@@ -14,7 +14,7 @@
 
 #include "image.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Bitmap: public Image {
 public:
@@ -29,6 +29,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* BITMAP_HPP_ */

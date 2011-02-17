@@ -9,7 +9,7 @@
 #include <settings.hpp>
 #include <limits>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 AccelerationAction::AccelerationAction(const Settings<std::string>& settings, const std::string& settingsPrefix) :
     velocity_(getSetting<float> (settings, settingsPrefix + ".velocity", 0.0f)), acceleration_(getSetting<float> (

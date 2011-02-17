@@ -12,7 +12,7 @@
 #include <terrain.hpp>
 #include <boost/scoped_ptr.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;
@@ -25,6 +25,8 @@ public:
     Map(const Settings<std::string>& settings, const std::string& prefix);
 
 private:
+
+    Terrain terrain_;
 
 };
 

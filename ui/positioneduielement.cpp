@@ -9,7 +9,7 @@
 
 #include <settings.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 PositionedUiElement::PositionedUiElement(const Settings<std::string>& settings, const std::string& prefix) :
     area_(

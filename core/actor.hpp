@@ -16,7 +16,7 @@
 #include <sprite.hpp>
 #include <action.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Actor {
 public:

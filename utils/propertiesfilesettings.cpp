@@ -15,7 +15,7 @@
 #include <boost/lexical_cast.hpp>
 #include <log.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 namespace fs = boost::filesystem;
 

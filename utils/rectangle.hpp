@@ -10,7 +10,7 @@
 
 #include <boost/call_traits.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 /**
  * Represents a rectangle in some space, depending on the PointType.

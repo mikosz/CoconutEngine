@@ -14,7 +14,7 @@
 #include <graphics.hpp>
 #include <actiondispatcher.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Core* Core::instance_ = 0;
 

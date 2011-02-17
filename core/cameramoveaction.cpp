@@ -8,7 +8,7 @@
 #include <cameramoveaction.hpp>
 #include <camera.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 CameraMoveAction::CameraMoveAction(Camera& camera, const Vec3D& direction, const Settings<std::string>& settings,
         const std::string& prefix) :

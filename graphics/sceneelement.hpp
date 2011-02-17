@@ -8,13 +8,19 @@
 #ifndef SCENEELEMENT_HPP_
 #define SCENEELEMENT_HPP_
 
-#include "graphics/camera.hpp"
-#include "utils/rectangle.hpp"
-#include "utils/vector.hpp"
+#include <limits>
 
-namespace CoconutEngine {
+#include <boost/enable_shared_from_this.hpp>
 
-class SceneElement {
+#include "rectangle.hpp"
+#include "vector.hpp"
+#include "renderpipeline.hpp"
+
+namespace coconutengine {
+
+class Camera;
+
+class SceneElement : public boost::enable_shared_from_this<SceneElement> {
 public:
 
     virtual ~SceneElement() {
@@ -24,16 +30,26 @@ public:
         return boundingBox_;
     }
 
-    virtual void render() const = 0;
+    void render(const Camera& camera) const;
 
 protected:
 
-    SceneElement();
+    RenderPipeline::ElementID id_;
 
     Rectangle<Vec3D> boundingBox_;
 
+    SceneElement() :
+        id_(0), boundingBox_(Vec3D(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(),
+                std::numeric_limits<float>::max()), Vec3D(-std::numeric_limits<float>::max(),
+                -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max())) {
+    }
+
+    virtual void doRender(const Camera& camera) const = 0;
+
+    void renderBoundingBox(const Camera& camera) const;
+
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* SCENEELEMENT_HPP_ */

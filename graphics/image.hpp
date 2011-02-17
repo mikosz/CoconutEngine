@@ -10,7 +10,7 @@
 
 #include <boost/scoped_array.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Image
@@ -37,6 +37,6 @@ protected:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* IMAGE_HPP_ */

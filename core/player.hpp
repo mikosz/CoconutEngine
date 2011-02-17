@@ -15,7 +15,7 @@
 #include <timemanager.hpp>
 #include <actor.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Player : boost::noncopyable

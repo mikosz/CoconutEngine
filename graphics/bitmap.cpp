@@ -9,9 +9,12 @@
 
 #include <fstream>
 #include <stdexcept>
-#include <log.hpp>
 
-using namespace CoconutEngine;
+#include <boost/cstdint.hpp>
+
+#include "log.hpp"
+
+using namespace coconutengine;
 
 namespace {
 
@@ -40,7 +43,7 @@ Bitmap::Bitmap(const boost::filesystem::path& filename) {
     try {
         load(file);
     } catch (const std::runtime_error& e) {
-        throw std::runtime_error("While loading " + filename + ": " + e.what());
+        throw std::runtime_error("While loading " + filename.string() + ": " + e.what());
     }
     file.close();
 }
@@ -52,23 +55,23 @@ Bitmap::Bitmap(std::istream& inputStream) {
 void Bitmap::load(std::istream& inputStream) {
     SET_LOG_CONTEXT("Bitmap::Load");
 
-    uint16_t header = read<uint16_t> (inputStream);
+    boost::uint16_t header = read<boost::uint16_t> (inputStream);
     if (header != BMP_HEADER) {
         throw std::runtime_error("Not a valid bitmap");
     }
 
     inputStream.ignore(8);
-    uint32_t offset = read<uint32_t> (inputStream);
-    if (read<uint32_t> (inputStream) != WINDOWS_V3_BITMAP) {
+    boost::uint32_t offset = read<boost::uint32_t> (inputStream);
+    if (read<boost::uint32_t> (inputStream) != WINDOWS_V3_BITMAP) {
         throw std::runtime_error("Not a windows V3 bitmap");
     }
 
-    width_ = read<uint32_t> (inputStream);
-    height_ = read<uint32_t> (inputStream);
+    width_ = read<boost::uint32_t> (inputStream);
+    height_ = read<boost::uint32_t> (inputStream);
     inputStream.ignore(2);
-    uint16_t bpp = read<uint16_t> (inputStream);
+    boost::uint16_t bitsPerPixel = read<boost::uint16_t> (inputStream);
 
-    if (bpp % 8) {
+    if (bitsPerPixel % 8) {
         throw std::runtime_error("Bits per pixel must by a multiple of 8");
     }
     if (read<uint16_t> (inputStream)) {
@@ -77,15 +80,15 @@ void Bitmap::load(std::istream& inputStream) {
 
     inputStream.seekg(offset, std::ios_base::beg);
 
-    pixels_.reset(new unsigned char[width_ * height_]);
+    uint8_t bytesPerPixel = bitsPerPixel / 8;
 
-    size_t bytesPerRow = width_ * (bpp / 8);
-    size_t padding = 8 - (bytesPerRow % 8);
-    if (padding == 8)
-        padding = 0;
+    pixels_.reset(new unsigned char[width_ * height_ * bytesPerPixel]);
+
+    size_t bytesInRow = width_ * bytesPerPixel;
+    size_t padding = (4 - (bytesInRow % 4)) % 4;
 
     for (size_t row = 0; row < height_; ++row) {
-        inputStream.read(reinterpret_cast<char*> (pixels_.get() + (row * bytesPerRow)), bytesPerRow);
+        inputStream.read(reinterpret_cast<char*> (pixels_.get() + (row * bytesInRow)), bytesInRow);
         inputStream.ignore(padding);
     }
 

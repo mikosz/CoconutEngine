@@ -11,7 +11,7 @@
 #include <log.hpp>
 #include <cassert>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 EventHandler* EventHandler::instance_ = 0;
 

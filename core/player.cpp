@@ -7,7 +7,7 @@
 
 #include <player.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 Player::Player(const std::string& name) :
     name_(name)

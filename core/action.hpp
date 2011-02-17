@@ -10,7 +10,7 @@
 
 #include <timemanager.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Actor;
@@ -27,6 +27,6 @@ public:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* ACTION_HPP_ */

@@ -11,7 +11,7 @@
 #include <boost/thread.hpp>
 #include <queue>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;
@@ -48,6 +48,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* TIMEMANAGER_HPP_ */

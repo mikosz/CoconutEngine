@@ -11,7 +11,7 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;

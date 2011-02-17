@@ -14,7 +14,7 @@
 #include <camera.hpp>
 #include <game.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 template<class > class Settings;
 

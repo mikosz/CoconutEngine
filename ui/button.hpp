@@ -14,7 +14,7 @@
 
 #include <log.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;

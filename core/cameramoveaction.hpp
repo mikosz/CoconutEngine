@@ -13,7 +13,7 @@
 #include <string>
 #include <timemanager.hpp>
 
-namespace CoconutEngine {
+namespace coconutengine {
 
 class Camera;
 template <class> class Settings;

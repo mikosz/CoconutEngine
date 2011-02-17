@@ -1,167 +1,260 @@
-/*
- * matrix.hpp
- *
- *  Created on: 2010-09-12
- *      Author: mikosz
- */
-
 #ifndef MATRIX_HPP_
 #define MATRIX_HPP_
 
-#include <vector>
-#include <algorithm>
+#include <cassert>
+#include <utility>
 
-namespace CoconutEngine {
+#include <boost/multi_array.hpp>
+#include <boost/operators.hpp>
+
+#include "vector.hpp"
+
+namespace coconutengine {
 namespace detail {
 
-template <class Matrix, class T>
-class MatrixIterator : public std::iterator<std::input_iterator_tag, T> {
+template <class MatrixType, class PointerType, class ReferenceType, class ViewType>
+class Iterator :
+    public boost::random_access_iterator_helper<
+        Iterator<MatrixType, PointerType, ReferenceType, ViewType> ,
+        typename MatrixType::Value,
+        ptrdiff_t,
+        PointerType,
+        ReferenceType>,
+    // XXX: make sure additive2 wont allow pair +/- iterator
+    public boost::additive2<
+        Iterator<MatrixType, PointerType, ReferenceType, ViewType>,
+        std::pair<ptrdiff_t, ptrdiff_t> > {
 public:
 
-    typedef MatrixIterator<Matrix, T> Self;
+    typedef MatrixType Matrix;
 
-    MatrixIterator(Matrix& matrix) :
-        startingColumn_(0), row_(0), column_(0), lastRow_(0), lastColumn_(0) {
+    typedef typename Matrix::Value Value;
+
+    typedef typename Matrix::Range Range;
+
+    typedef ReferenceType Reference;
+
+    typedef PointerType Pointer;
+
+    Iterator() :
+        matrix_(0),
+        view_(mockMultiArray_[boost::indices[Range(0, 0)][Range(0, 0)]]),
+        row_(0),
+        column_(0) {
     }
 
-    MatrixIterator(Matrix& matrix, size_t lastRow, size_t lastColumn) :
-        startingColumn_(0), row_(0), column_(0), lastRow_(lastRow), lastColumn_(lastColumn) {
+    Iterator(Matrix& matrix) :
+        matrix_(&matrix),
+        view_(matrix.data_[boost::indices[Range(0, matrix.height_)][Range(0, matrix.width_)]]),
+        row_(0),
+        column_(0) {
     }
 
-    MatrixIterator(Matrix& matrix, size_t row, size_t column, size_t lastRow, size_t lastColumn) :
-        startingColumn_(column), row_(row), column_(column), lastRow_(lastRow), lastColumn_(lastColumn) {
+    Iterator(Matrix& matrix, const Range& rowRange, const Range& columnRange) :
+        matrix_(&matrix),
+        view_(matrix.data_[boost::indices[rowRange][columnRange]]),
+        row_(0),
+        column_(0) {
     }
 
-    bool operator==(const MatrixIterator& rhs) const {
-        return row_ == rhs.row_ && column_ == rhs.column_;
+    Reference operator*() const {
+        assert(matrix_);
+        return view_[row_][column_];
     }
 
-    bool operator!=(const MatrixIterator& rhs) const {
-        return !(*this == rhs);
-    }
-
-    Self& operator++() {
+    Iterator& operator++() {
+        assert(!atEnd());
         ++column_;
-        if (column_ >= lastColumn_) {
-            column_ = startingColumn_;
+        if (column_ == width()) {
             ++row_;
+            column_ = 0;
         }
         return *this;
     }
 
-    Self operator++(int) {
-        return ++Self(*this);
-    }
-
-    Self& operator--() {
-        --column_;
-        if (column_ < startingColumn_) {
-            column_ = lastColumn_ - 1;
+    Iterator& operator--() {
+        assert(row_ || column_);
+        if (column_) {
+            --column_;
+        } else {
             --row_;
+            column_ = width() - 1;
         }
         return *this;
     }
 
-    Self operator--(int) {
-        return --Self(*this);
+    Iterator& operator+=(const std::pair<ptrdiff_t, ptrdiff_t>& vec) {
+        assert(vec.first <= 0 || row_ + vec.first < height());
+        assert(vec.second <= 0 || column_ + vec.second < width());
+        assert(vec.first >= 0 || static_cast<size_t>(-vec.first) <= row_);
+        assert(vec.second >= 0 || static_cast<size_t>(-vec.second) <= column_);
+        row_ += vec.first;
+        column_ += vec.second;
+        return *this;
     }
 
-    reference operator*() const {
-        return matrix_[row_][column_];
+    Iterator& operator-=(const std::pair<ptrdiff_t, ptrdiff_t>& vec) {
+        assert(vec.first >= 0 || row_ + -vec.first < height());
+        assert(vec.second >= 0 || column_ + -vec.second < width());
+        assert(vec.first <= 0 || vec.first <= row_);
+        assert(vec.second <= 0 || vec.second <= column_);
+        row_ -= vec.first;
+        column_ -= vec.second;
+        return *this;
     }
 
-    pointer operator->() const {
-        return &matrix_[row_][column_];
+    size_t row() const {
+        return row_;
+    }
+
+    size_t column() const {
+        return column_;
+    }
+
+    friend bool operator==(const Iterator& lhs, const Iterator& rhs) {
+        return (lhs.atEnd() && rhs.atEnd()) || ((lhs.matrix_ == rhs.matrix_) && (&*lhs == &*rhs));
+    }
+
+    friend bool operator<(const Iterator& lhs, const Iterator& rhs) {
+        if (!rhs.matrix_) {
+            if (lhs.matrix_) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (!lhs.matrix_) {
+            return false;
+        }
+
+        assert(sameView(lhs, rhs));
+
+        return lhs.row_ < rhs.row_ || (lhs.row_ == rhs.row_ && lhs.column_ < rhs.column_);
+    }
+
+    friend ptrdiff_t operator-(const Iterator& lhs, const Iterator& rhs) {
+        assert(lhs.matrix_ && sameView(lhs, rhs));
+
+        return ((lhs.row_ - rhs.row_) * lhs.width_) + (lhs.column_ - rhs.column_);
     }
 
 private:
 
-    Matrix& matrix_;
+    typedef ViewType View;
 
-    size_t startingColumn_;
+    static typename Matrix::Data mockMultiArray_;
 
-    size_t row_;
+    Matrix* matrix_;
 
-    size_t column_;
+    mutable View view_;
 
-    size_t lastRow_;
+    size_t row_, column_;
 
-    size_t lastColumn_;
+    static bool sameView(const Iterator& lhs, const Iterator& rhs) {
+        if (!lhs.matrix_) {
+            if (!rhs.matrix_) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return lhs.matrix_ == rhs.matrix_ && lhs.width() == rhs.width() && lhs.height() == rhs.height() && (lhs.width()
+                == 0 || lhs.height() == 0 || (lhs.view_.origin() == &rhs.view_.origin()));
+    }
+
+    bool atEnd() const {
+        return !matrix_ || row_ == height();
+    }
+
+    size_t height() const {
+        assert(matrix_);
+        return view_.size();
+    }
+
+    size_t width() const {
+        assert(matrix_);
+        return height() ? view_[0].size() : 0;
+    }
+
+    // XXX: find a way to implement operator=
+    Iterator& operator=(const Iterator& rhs);
 
 };
+
+template<class MatrixType, class PointerType, class ReferenceType, class ViewType>
+typename Iterator<MatrixType, PointerType, ReferenceType, ViewType>::Matrix::Data Iterator<MatrixType,
+        PointerType, ReferenceType, ViewType>::mockMultiArray_(boost::extents[0][0]);
 
 } // namespace detail
 
 template <class T>
 class Matrix {
 
-    class Row {
-    public:
-
-        Row() {
-        }
-
-        Row(size_t width) {
-            row_.reserve(width);
-            row_.resize(width);
-        }
-
-        T& operator[](size_t i) {
-            return row_[i];
-        }
-
-        T& operator[](size_t i) const {
-            return row_[i];
-        }
-
-        void resize(size_t width) {
-            row_.reserve(width);
-            row_.resize(width);
-        }
-
-    private:
-
-        std::vector<T> row_;
-
-    };
+    typedef boost::multi_array<T, 2> Data;
 
 public:
 
     typedef Matrix<T> Self;
 
+    typedef typename boost::multi_array<T, 2>::index_range Range;
+
     typedef T Value;
 
-    typedef T& Reference;
+    typedef detail::Iterator<Self, T*, T&, typename Data::template array_view<2>::type> Iterator;
 
-    typedef T* Pointer;
+    typedef detail::Iterator<const Self, const T*, const T&, typename Data::template const_array_view<2>::type>
+            ConstIterator;
 
-    typedef MatrixIterator<Self, Value> Iterator;
-
-    typedef MatrixIterator<const Self, const Value> ConstIterator;
-
-    Matrix() {
+    Matrix() :
+        height_(0), width_(0) {
     }
 
     Matrix(size_t height, size_t width) :
-        height_(height), width_(width) {
-        rows_.resize(height);
-        rows_.resize(height, width);
+        data_(boost::extents[height][width]), height_(height), width_(width) {
     }
 
-    Row& operator[](size_t i) {
-        return rows_[i];
+    Iterator begin() {
+        return Iterator(*this);
     }
 
-    const Row& operator[](size_t i) const {
-        return rows_[i];
+    ConstIterator begin() const {
+        return ConstIterator(*this);
+    }
+
+    Iterator end() {
+        return Iterator();
+    }
+
+    ConstIterator end() const {
+        return ConstIterator();
+    }
+
+    std::pair<Iterator, Iterator> range(size_t row1, size_t column1, size_t row2, size_t column2) {
+        assert(row1 <= row2);
+        assert(column1 <= column2);
+        assert(row2 <= height());
+        assert(column2 <= width());
+        return std::make_pair(Iterator(*this, Range(row1, row2), Range(column1, column2)), Iterator());
+    }
+
+    std::pair<ConstIterator, ConstIterator> range(
+            size_t row1, size_t column1, size_t row2, size_t column2) const {
+        assert(row1 <= row2);
+        assert(column1 <= column2);
+        assert(row2 <= height());
+        assert(column2 <= width());
+        return std::make_pair(ConstIterator(*this, Range(row1, row2), Range(column1, column2)),
+                ConstIterator());
     }
 
     void resize(size_t height, size_t width) {
         height_ = height;
         width_ = width;
-        rows_.reserve(height);
-        rows_.resize(height);
-        std::for_each(rows_.begin(), rows_.end(), std::mem_fun(&Row::resize));
+        data_.resize(boost::extents[height][width]);
+    }
+
+    void swap(Matrix& rhs) {
+        data_.swap(rhs);
     }
 
     size_t height() const {
@@ -172,42 +265,25 @@ public:
         return width_;
     }
 
-    Iterator begin() {
-        return Iterator(*this, height_, width_);
+
+    T& operator()(size_t row, size_t column) {
+        return data_[row][column];
     }
 
-    ConstIterator begin() const {
-        return ConstIterator(*this, height_, width_);
-    }
-
-    Iterator end() {
-        return Iterator(*this, height_, width_, height_, width_);
-    }
-
-    ConstIterator end() const {
-        return ConstIterator(*this, height_, width_, height_, width_);
-    }
-
-    std::pair<Iterator, Iterator> range(size_t row, size_t column, size_t lastRow, size_t lastColumn) {
-        return std::pair<Iterator, Iterator>(Iterator(*this, row, column, lastRow, lastColumn),
-                Iterator(*this, lastRow, lastColumn, lastRow, lastColumn));
-    }
-
-    std::pair<ConstIterator, ConstIterator> range(size_t row, size_t column, size_t lastRow, size_t lastColumn) {
-        return std::pair<ConstIterator, ConstIterator>(ConstIterator(*this, row, column, lastRow, lastColumn),
-                ConstIterator(*this, lastRow, lastColumn, lastRow, lastColumn));
+    const T& operator()(size_t row, size_t column) const {
+        return data_[row][column];
     }
 
 private:
 
-    size_t height_;
+    Data data_;
 
-    size_t width_;
+    size_t height_, width_;
 
-    std::vector<Row> rows_;
+    template <class MatrixType, class PointerType, class ReferenceType> friend class detail::Iterator;
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* MATRIX_HPP_ */

@@ -10,7 +10,8 @@
 #include <settings.hpp>
 #include <camera.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
-Map::Map(const Settings<std::string>& settings, const std::string& prefix) {
+Map::Map(const Settings<std::string>& settings, const std::string& prefix) :
+    terrain_(settings, prefix) {
 }

@@ -16,7 +16,7 @@
 #include <screen.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Core : boost::noncopyable
@@ -49,6 +49,6 @@ private:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* CORE_HPP_ */

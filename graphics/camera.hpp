@@ -12,7 +12,7 @@
 #include <string>
 #include <frustum.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 template <class> class Settings;

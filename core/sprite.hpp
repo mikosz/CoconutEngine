@@ -8,7 +8,7 @@
 #ifndef SPRITE_HPP_
 #define SPRITE_HPP_
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Sprite

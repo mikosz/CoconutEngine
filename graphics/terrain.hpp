@@ -8,65 +8,59 @@
 #ifndef TERRAIN_HPP_
 #define TERRAIN_HPP_
 
-#include <bitmap.hpp>
 #include <string>
-#include <vector.hpp>
-#include <ntree.hpp>
-#include <rectangle.hpp>
-#include <auto_ptr.h>
+
+#include <GL/gl.h>
+
+#include <boost/shared_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
 
-namespace ublas = boost::numeric::ublas;
+#include "terrainpatch.hpp"
+#include "vector.hpp"
+#include "texture.hpp"
+#include "heightmap.hpp"
 
-namespace CoconutEngine {
+namespace coconutengine {
 
-template<class > class Settings;
-class Camera;
+template <class > class Settings;
 
 class Terrain {
 public:
 
-    static std::auto_ptr<Terrain> create(const Settings<std::string>& settings, const std::string& prefix);
+    Terrain(const Settings<std::string>& settings, const std::string& prefix);
 
-    void render(const Camera& camera) const;
+    const std::vector<GLuint>& indexArray(size_t lod) const {
+        return lod < indexArrays_.size() ? indexArrays_[lod] : indexArrays_.back();
+    }
+
+    const std::vector<Vec2D>& textureCoordArray() const {
+        return textureCoordArray_;
+    }
+
+    const Texture& texture() const {
+        return texture_;
+    }
+
+    size_t lod(float distance) const {
+        return distance / lodStep_;
+    }
 
 private:
 
-    struct HeightMapVertex {
-
-        float height;
-
-        Vec3D normal;
-
-    };
-
-    typedef ublas::matrix<HeightMapVertex> HeightMap;
-
-    Terrain(const Bitmap* heightMapImage, const Settings<std::string>& settings, const std::string& prefix);
-
-    struct QuadTreeEntry {
-        Rectangle<Vec3D> boundingBox;
-
-        Rectangle<Vector3D<size_t> > area;
-    };
-
-    QuadTree<QuadTreeEntry> quadTree_;
-
     HeightMap heightMap_;
 
-    float waterLevel_;
+    Texture texture_;
 
-    float renderingStep_;
+    std::vector<std::vector<GLuint> > indexArrays_;
 
-    void setupHeightMap(const Bitmap* heightMapImage, float heightScalingFactor);
+    std::vector<Vec2D> textureCoordArray_;
 
-    QuadTreeEntry setupQuadTree(unsigned short level, Rectangle<Vector3D<size_t> > area, size_t node);
+    std::vector<boost::shared_ptr<TerrainPatch> > patches_;
 
-    void render(const Camera& camera, size_t node) const;
+    float lodStep_;
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* TERRAIN_HPP_ */

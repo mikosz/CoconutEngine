@@ -11,17 +11,17 @@
 #define LOG_OUTPUT_STREAM StdoutStream
 #include <log.hpp>
 
-using namespace CoconutEngine;
+using namespace coconutengine;
 
 int main() {
     SET_LOG_LEVEL(LogLevel::DEBUG);
     SET_LOG_CONTEXT("main");
 
-    try {
+//    try {
         Core::instance().loop();
-    } catch (const std::exception& e) {
-        LOG_ERROR   << "Caught exception: " << e.what() << LOG_END;
-    }
+//    } catch (const std::exception& e) {
+//        LOG_ERROR   << "Caught exception: " << e.what() << LOG_END;
+//    }
 
     return 0;
 }

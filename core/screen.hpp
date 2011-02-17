@@ -10,7 +10,7 @@
 
 #include <timemanager.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Screen

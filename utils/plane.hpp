@@ -10,7 +10,7 @@
 
 #include <vector.hpp>
 
-namespace CoconutEngine
+namespace coconutengine
 {
 
 class Plane
@@ -35,6 +35,6 @@ public:
 
 };
 
-} // namespace CoconutEngine
+} // namespace coconutengine
 
 #endif /* PLANE_HPP_ */
