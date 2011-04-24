@@ -25,13 +25,18 @@ public:
 
     ~Core();
 
+    static Core& instance();
+
     Settings<std::string>& getApplicationSettings() { return *applicationSettings_; }
 
     void loop();
 
+
     Window& window() { return window_; }
 
-    static Core& instance();
+    const TimeManager& timeManager() const {
+        return timeManager_;
+    }
 
 private:
 

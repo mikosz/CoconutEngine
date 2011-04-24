@@ -2,6 +2,7 @@
 #define TEXTURE_HPP_
 
 #include "image.hpp"
+#include "colour.hpp"
 
 #include <GL/gl.h>
 
@@ -22,12 +23,21 @@ public:
         MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR
     };
 
-    Texture(const Image& image, Dimensionality dimensionality = TEXTURE_2D, Filter magnificationFilter =
-            LINEAR, Filter minificationFilter = LINEAR);
+    Texture(Dimensionality dimensionality = TEXTURE_2D, Filter magnificationFilter = LINEAR,
+            Filter minificationFilter = LINEAR);
+
+    Texture(const Image& image, Dimensionality dimensionality = TEXTURE_2D,
+            Filter magnificationFilter = LINEAR, Filter minificationFilter = LINEAR);
 
     ~Texture();
 
+    void enable() const;
+
+    void disable() const;
+
     void bind() const;
+
+    void load(const Image& image) const;
 
 private:
 

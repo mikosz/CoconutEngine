@@ -43,8 +43,6 @@ void TerrainPatch::addVertex(const Vertex& vertex) {
 void TerrainPatch::doRender(const Camera& camera) const {
     assert(vertices_.size());
 
-    glEnable(GL_TEXTURE_2D);
-
     glEnable(GL_FOG);
     glFogi(GL_FOG_MODE, GL_LINEAR);
     glFogf(GL_FOG_START, 1000.0f);
@@ -60,6 +58,7 @@ void TerrainPatch::doRender(const Camera& camera) const {
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    terrain_.texture().enable();
     terrain_.texture().bind();
     glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &vertices_.front().position);
     glNormalPointer(GL_FLOAT, sizeof(Vertex), &vertices_.front().normal);
@@ -74,7 +73,7 @@ void TerrainPatch::doRender(const Camera& camera) const {
 
     glDisable(GL_FOG);
 
-    glDisable(GL_TEXTURE_2D);
+    terrain_.texture().disable();
 }
 
 size_t TerrainPatch::lod(const Camera& camera) const {

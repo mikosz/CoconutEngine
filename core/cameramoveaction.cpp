@@ -19,5 +19,5 @@ void CameraMoveAction::update(Milliseconds delta) {
     AccelerationAction::update(delta);
 
     Vec3D& position = camera_.position();
-    position += direction_.normalised() * velocity();
+    position += direction_.normalised() * velocity() * delta;
 }

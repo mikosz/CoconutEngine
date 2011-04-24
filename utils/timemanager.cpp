@@ -71,5 +71,9 @@ void TimeManager::frameEnd() {
 }
 
 unsigned int TimeManager::fps() const {
-    return 1000 / ((last100FrameStarts_.back() - last100FrameStarts_.front()) / last100FrameStarts_.size());
+    if (last100FrameStarts_.size() && (last100FrameStarts_.back() - last100FrameStarts_.front())) {
+        return 1000 / ((last100FrameStarts_.back() - last100FrameStarts_.front()) / last100FrameStarts_.size());
+    } else {
+        return 0;
+    }
 }

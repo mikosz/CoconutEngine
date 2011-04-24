@@ -1,23 +1,18 @@
-/*
- * gameview.cpp
- *
- *  Created on: Dec 2, 2008
- *      Author: mikosz
- */
-
 #include <gameview.hpp>
 #include <game.hpp>
 #include <core.hpp>
 #include <eventhandler.hpp>
 #include <log.hpp>
 #include <boost/bind.hpp>
+#include <boost/lexical_cast.hpp>
 #include <utility.hpp>
 #include <actiondispatcher.hpp>
 #include <vector.hpp>
 #include <cameramoveaction.hpp>
 #include <graphics.hpp>
-
 #include "renderpipeline.hpp"
+
+#include "bitmap.hpp"
 
 using namespace coconutengine;
 
@@ -59,7 +54,7 @@ GameView::GameView(Game& game, const Settings<std::string>& settings, const std:
             cameraStopFreeMoveEventId_(0), cameraFreeMoveEventId_(0), cameraStartMoveForwardEventId_(0),
             cameraStopMoveForwardEventId_(0), cameraStartMoveBackEventId_(0), cameraStopMoveBackEventId_(0),
             cameraStartMoveLeftEventId_(0), cameraStopMoveLeftEventId_(0), cameraStartMoveRightEventId_(0),
-            cameraStopMoveRightEventId_(0) {
+            cameraStopMoveRightEventId_(0), font_(settings, prefix + ".font") {
 
     cameraStartFreeMoveEventId_ = EventHandler::instance().registerCallback(boost::shared_ptr<EventType>(
             new MouseEventType(MouseEventType::MIDDLE_BUTTON_DOWN, area_)), boost::bind(&GameView::cameraStartFreeMove,
@@ -118,9 +113,17 @@ void GameView::render() const {
         Graphics::instance().drawWireframe();
     }
     camera_.setupPerspective(Core::instance().window().aspectRatio());
-    game_.sun().off();
     game_.sun().on();
     RenderPipeline::instance().render(camera_);
+    game_.sun().off();
+
+    camera_.setupOrthographic(Core::instance().window().width(), Core::instance().window().height());
+
+    font_.print("Current fps: " + boost::lexical_cast<std::string>(Core::instance().timeManager().fps()),
+            Rectangle<Vec2D> (
+                    Vec2D(0.0f, 0.0f),
+                    Vec2D(Core::instance().window().width(), Core::instance().window().height())),
+            Colour::WHITE);
 }
 
 bool GameView::cameraStartFreeMove(const SDL_Event& event) {

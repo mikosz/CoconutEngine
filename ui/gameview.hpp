@@ -16,6 +16,7 @@
 #include <boost/shared_ptr.hpp>
 #include <accelerationaction.hpp>
 #include <cameramoveaction.hpp>
+#include "font.hpp"
 
 namespace coconutengine {
 
@@ -108,6 +109,8 @@ private:
     Vector2D<int> mousePosition_;
 
     SDL_GrabMode grabMode_;
+
+    Font font_;
 
 };
 

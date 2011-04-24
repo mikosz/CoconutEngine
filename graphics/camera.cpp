@@ -52,8 +52,13 @@ Camera::Camera(const Settings<std::string>& settings, const std::string& prefix)
 
 void Camera::setupOrthographic(float width, float height) const
 {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
     // TODO: Hard coded
     gluOrtho2D(0.0f, width, 0.0f, height);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 void Camera::setupPerspective(float aspectRatio) const
@@ -64,6 +69,7 @@ void Camera::setupPerspective(float aspectRatio) const
     gluPerspective(fov_, aspectRatio, nearPlane_, farPlane_);
 
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
     glRotatef(toDegrees(-rotation_.x()), 1.0f, 0.0f, 0.0f);
     glRotatef(toDegrees(-rotation_.y()), 0.0f, 1.0f, 0.0f);
     glRotatef(toDegrees(-rotation_.z()), 0.0f, 0.0f, 1.0f);
