@@ -24,7 +24,7 @@ public:
 	virtual void render() const
 	{}
 
-	virtual void update(Milliseconds delta)
+	virtual void update(TimeDuration delta)
 	{}
 
 protected:

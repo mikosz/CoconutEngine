@@ -24,7 +24,7 @@ public:
     CameraMoveAction(Camera& camera, const Vec3D& direction, const Settings<std::string>& settings,
             const std::string& prefix);
 
-    void update(Milliseconds delta);
+    void update(TimeDuration delta);
 
     Vec3D& direction() {
         return direction_;

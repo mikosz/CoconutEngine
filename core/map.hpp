@@ -24,6 +24,10 @@ public:
 
     Map(const Settings<std::string>& settings, const std::string& prefix);
 
+    const Terrain& terrain() const {
+        return terrain_;
+    }
+
 private:
 
     Terrain terrain_;

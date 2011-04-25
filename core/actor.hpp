@@ -25,7 +25,7 @@ public:
 
     virtual ~Actor();
 
-    virtual void update(Milliseconds delta) = 0;
+    virtual void update(TimeDuration delta) = 0;
 
     Vec3D& position() {
         return position_;

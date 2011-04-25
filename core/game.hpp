@@ -26,7 +26,7 @@ public:
 
     Game(const Settings<std::string>& settings, const std::string& prefix);
 
-    void update(Milliseconds delta);
+    void update(TimeDuration delta);
 
     Map& map() { return map_; }
 

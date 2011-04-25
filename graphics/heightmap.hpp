@@ -34,6 +34,12 @@ public:
         return heightMap_;
     }
 
+    const Container& data() const {
+        return heightMap_;
+    }
+
+    float elevation(const Vec2D& position) const;
+
 private:
 
     void setupHeightMap(const Settings<std::string>& settings, const std::string& prefix);
@@ -49,6 +55,10 @@ private:
     size_t height_;
 
     size_t width_;
+
+    float scale_;
+
+    float heightScale_;
 
 };
 

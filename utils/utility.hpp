@@ -8,21 +8,21 @@
 #ifndef UTILITY_HPP_
 #define UTILITY_HPP_
 
+#include <algorithm>
+
 namespace coconutengine
 {
 
 const float PI = 3.14159265f;
 
 template <class L, class R>
-L min(L lhs, R rhs)
-{
+L min(L lhs, R rhs) {
     return lhs < rhs ? lhs : rhs;
 }
 
 template <class L, class R>
-L max(L lhs, R rhs)
-{
-    return lhs > rhs ? lhs : rhs;
+L max(L lhs, R rhs) {
+    return lhs < rhs ? rhs : lhs;
 }
 
 template <class V, class B, class T>

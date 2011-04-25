@@ -19,7 +19,7 @@ public:
 
     AccelerationAction(const Settings<std::string>& settings, const std::string& settingsPrefix);
 
-    void update(Milliseconds delta);
+    void update(TimeDuration delta);
 
     bool complete();
 

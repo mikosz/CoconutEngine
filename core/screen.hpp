@@ -20,7 +20,7 @@ public:
     virtual ~Screen()
     {}
 
-    virtual void update(Milliseconds delta) = 0;
+    virtual void update(TimeDuration delta) = 0;
 
     virtual void render() const = 0;
 

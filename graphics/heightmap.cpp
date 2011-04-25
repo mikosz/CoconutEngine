@@ -9,6 +9,7 @@
 
 #include <boost/filesystem.hpp>
 
+#include "utility.hpp"
 #include "bitmap.hpp"
 #include "log.hpp"
 
@@ -25,7 +26,9 @@ void modifyNormal(Vec3D& normal, const Vec3D& middle, const Vec3D* v1, const Vec
 
 } // anonymous namespace
 
-HeightMap::HeightMap(const Settings<std::string>& settings, const std::string& prefix) {
+HeightMap::HeightMap(const Settings<std::string>& settings, const std::string& prefix) :
+        scale_(getSetting<float> (settings, prefix + ".scale")),
+        heightScale_(getSetting<float> (settings, prefix + ".height_scale")) {
     setupHeightMap(settings, prefix);
 }
 
@@ -39,20 +42,18 @@ void HeightMap::setupHeightMap(const Settings<std::string>& settings, const std:
     width_ = bitmap.width();
 
     heightMap_.resize(height_, width_);
-    const float scale = getSetting<float> (settings, prefix + ".scale");
-    const float heightScale = getSetting<float> (settings, prefix + ".height_scale");
 
     for (size_t row = 0; row < height_; ++row) {
         for (size_t column = 0; column < width_; ++column) {
             const size_t x = column;
             const size_t y = height_ - row - 1;
             const size_t z = bitmap.pixels()[y * width_ + x];
-            heightMap_(row, column).vertex = Vec3D(scale * x, scale * y, heightScale * z / 255.0f);
+            heightMap_(row, column).vertex = Vec3D(scale_ * x, scale_ * y, heightScale_ * z / 255.0f);
             LOG_TRACE   << "vertex: " << heightMap_(row, column).vertex << LOG_END;
         }
     }
 
-    setupNormals(scale);
+    setupNormals(scale_);
 
     LOG_INFO    << "Complete" << LOG_END;
 }
@@ -102,4 +103,14 @@ void HeightMap::setupNormals(const size_t scale) {
 
         it->normal = normal.normalise();
     }
+}
+
+float HeightMap::elevation(const Vec2D& position) const {
+    size_t row = height_ - 1 - (position.y() / scale_),
+            column = position.x() / scale_;
+
+    row = clamp(row, 0, height_ - 1);
+    column = clamp(column, 0, width_ - 1);
+
+    return heightMap_(row, column).vertex.z();
 }

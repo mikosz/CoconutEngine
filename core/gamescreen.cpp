@@ -15,7 +15,7 @@ GameScreen::GameScreen(const Settings<std::string>& settings, const std::string&
     game_(settings, prefix + ".game"), gameView_(game_, settings, prefix + ".game_view") {
 }
 
-void GameScreen::update(Milliseconds delta) {
+void GameScreen::update(TimeDuration delta) {
     game_.update(delta);
 }
 

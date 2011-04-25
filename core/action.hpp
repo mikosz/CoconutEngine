@@ -21,7 +21,7 @@ public:
 
 	virtual ~Action() {}
 
-	virtual void update(Milliseconds delta) = 0;
+	virtual void update(TimeDuration delta) = 0;
 
 	virtual bool complete() = 0;
 

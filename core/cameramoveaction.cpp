@@ -15,9 +15,8 @@ CameraMoveAction::CameraMoveAction(Camera& camera, const Vec3D& direction, const
     AccelerationAction(settings, prefix), camera_(camera), direction_(direction) {
 }
 
-void CameraMoveAction::update(Milliseconds delta) {
+void CameraMoveAction::update(TimeDuration delta) {
     AccelerationAction::update(delta);
 
-    Vec3D& position = camera_.position();
-    position += direction_.normalised() * velocity() * delta;
+    camera_.moveRelative(direction_.normalised() * velocity() * delta.total_milliseconds());
 }

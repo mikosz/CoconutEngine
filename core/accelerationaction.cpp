@@ -21,8 +21,8 @@ bool AccelerationAction::complete() {
     return false;
 }
 
-void AccelerationAction::update(Milliseconds delta) {
-    velocity_ += acceleration_ * delta;
+void AccelerationAction::update(TimeDuration delta) {
+    velocity_ += acceleration_ * delta.total_milliseconds();
     if ((acceleration_ > 0 && velocity_ > targetVelocity_) || (acceleration_ < 0 && velocity_ < targetVelocity_)) {
         velocity_ = targetVelocity_;
     }

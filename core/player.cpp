@@ -18,7 +18,7 @@ Player::~Player()
 
 }
 
-void Player::update(Milliseconds delta)
+void Player::update(TimeDuration delta)
 {
     for(std::vector<boost::shared_ptr<Actor> >::iterator i = units_.begin();
         i != units_.end(); ++ i)

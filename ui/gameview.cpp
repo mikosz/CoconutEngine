@@ -48,7 +48,7 @@ Vec3D getDirection(const SDL_Event& event) {
 } // anonymous namespace
 
 GameView::GameView(Game& game, const Settings<std::string>& settings, const std::string& prefix) :
-    PositionedUiElement(settings, prefix), game_(game), camera_(settings, prefix + ".camera"), wireframe_(getSetting<
+    PositionedUiElement(settings, prefix), game_(game), camera_(game.map().terrain(), settings, prefix + ".camera"), wireframe_(getSetting<
             bool> (settings, prefix + ".wireframe")), settings_(settings), prefix_(prefix), cameraZoomSensitivity_(
             getSetting<float> (settings, prefix + ".cameraZoomSensitivity")), cameraStartFreeMoveEventId_(0),
             cameraStopFreeMoveEventId_(0), cameraFreeMoveEventId_(0), cameraStartMoveForwardEventId_(0),

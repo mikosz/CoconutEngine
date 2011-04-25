@@ -8,15 +8,16 @@
 #ifndef TIMEMANAGER_HPP_
 #define TIMEMANAGER_HPP_
 
-#include <boost/thread.hpp>
 #include <queue>
+
+#include <boost/date_time.hpp>
 
 namespace coconutengine
 {
 
 template <class> class Settings;
 
-typedef uint16_t Milliseconds;
+typedef boost::posix_time::time_duration TimeDuration;
 
 class TimeManager
 {
@@ -28,23 +29,25 @@ public:
 
     void frameEnd();
 
-    Milliseconds lastFrameLength() const { return lastFrameLength_; }
-
     unsigned int fps() const;
+
+    const TimeDuration& lastFrameLength() const {
+        return lastFrameLength_;
+    }
 
 private:
 
     bool manageFrameLength_;
 
-    Milliseconds minFrameLength_;
+    TimeDuration minFrameLength_;
 
-    Milliseconds maxFrameLength_;
+    TimeDuration maxFrameLength_;
 
-    boost::xtime thisFrameStart_;
+    boost::posix_time::ptime thisFrameStart_;
 
-    Milliseconds lastFrameLength_;
+    TimeDuration lastFrameLength_;
 
-    std::deque<boost::xtime> last100FrameStarts_;
+    std::deque<boost::posix_time::ptime> last100FrameStarts_;
 
 };
 

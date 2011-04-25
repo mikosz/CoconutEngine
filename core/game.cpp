@@ -19,7 +19,7 @@ Game::Game(const Settings<std::string>& settings, const std::string& prefix) :
     sun_.on();
 }
 
-void Game::update(Milliseconds delta) {
+void Game::update(TimeDuration delta) {
     for (std::vector<boost::shared_ptr<Player> >::iterator i = players_.begin(); i != players_.end(); ++i) {
         (*i)->update(delta);
     }

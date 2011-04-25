@@ -32,7 +32,7 @@ void ActionDispatcher::unregisterAction(ActionId actionId) {
     actions_.erase(actionId);
 }
 
-void ActionDispatcher::dispatch(Milliseconds delta) {
+void ActionDispatcher::dispatch(TimeDuration delta) {
     std::map<ActionId, boost::shared_ptr<Action> >::iterator it = actions_.begin(), end = actions_.end(), eraser;
     while (it != end) {
         if (it->second->complete()) {

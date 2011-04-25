@@ -13,6 +13,8 @@
 #include <utility.hpp>
 #include <cmath>
 
+#include "terrain.hpp"
+
 using namespace coconutengine;
 
 namespace
@@ -42,7 +44,8 @@ Plane extractPlane(GLfloat matrix[], short row)
 
 } // anonymous namespace
 
-Camera::Camera(const Settings<std::string>& settings, const std::string& prefix) :
+Camera::Camera(const Terrain& terrain, const Settings<std::string>& settings, const std::string& prefix) :
+    terrain_(terrain),
     fov_(getSetting<float>(settings, prefix + ".fov")),
     nearPlane_(getSetting<float>(settings, prefix + ".near_plane")),
     farPlane_(getSetting<float>(settings, prefix + ".far_plane")),
@@ -98,4 +101,16 @@ Frustum Camera::frustum() const
             extractPlane(modelview, 1),
             extractPlane(modelview, -1)
             );
+}
+
+void Camera::moveRelative(const Vec3D& direction) {
+    float elevation = position_.z() - terrain_.heightMap().elevation(Vec2D(position_.x(), position_.y()));
+
+    Vec3D d;
+    d.x() = direction.x() * std::cos(rotation_.z()) - direction.y() * std::sin(rotation_.z());
+    d.y() = direction.x() * std::sin(rotation_.z()) + direction.y() * std::cos(rotation_.z());
+
+    position_ += d;
+
+    position_.z() = terrain_.heightMap().elevation(Vec2D(position_.x(), position_.y())) + elevation;
 }

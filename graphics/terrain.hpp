@@ -45,6 +45,10 @@ public:
         return distance / lodStep_;
     }
 
+    const HeightMap& heightMap() const {
+        return heightMap_;
+    }
+
 private:
 
     HeightMap heightMap_;

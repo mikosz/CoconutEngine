@@ -28,7 +28,7 @@ public:
 
     void unregisterAction(ActionId actionId);
 
-    void dispatch(Milliseconds delta);
+    void dispatch(TimeDuration delta);
 
 private:
 

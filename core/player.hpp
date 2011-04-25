@@ -30,7 +30,7 @@ public:
 
     virtual void action() = 0;
 
-    void update(Milliseconds delta);
+    void update(TimeDuration delta);
 
     const std::string& getName() const { return name_; }
 

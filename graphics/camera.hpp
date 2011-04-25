@@ -16,12 +16,13 @@ namespace coconutengine
 {
 
 template <class> class Settings;
+class Terrain;
 
 class Camera
 {
 public:
 
-    Camera(const Settings<std::string>& settings, const std::string& prefix);
+    Camera(const Terrain& terrain, const Settings<std::string>& settings, const std::string& prefix);
 
     Vec3D& position() { return position_; }
 
@@ -43,7 +44,11 @@ public:
 
     Frustum frustum() const;
 
+    void moveRelative(const Vec3D& direction);
+
 private:
+
+    const Terrain& terrain_;
 
     float fov_;
 
