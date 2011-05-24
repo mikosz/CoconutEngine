@@ -17,8 +17,12 @@
 
 namespace coconutengine {
 
-class Terrain;
 class Camera;
+
+namespace graphics {
+namespace terrain {
+
+class Terrain;
 
 class TerrainPatch : public SceneElement {
 public:
@@ -29,9 +33,11 @@ public:
 
         Vec3D normal;
 
+        Vec3D brightness;
+
     };
 
-    static boost::shared_ptr<TerrainPatch> create(const Terrain& terrain);
+    static boost::shared_ptr<TerrainPatch> create(const graphics::terrain::Terrain& terrain);
 
     void doRender(const Camera& camera) const;
 
@@ -39,16 +45,18 @@ public:
 
 private:
 
-    const Terrain& terrain_;
+    const graphics::terrain::Terrain& terrain_;
 
     std::vector<Vertex> vertices_;
 
-    TerrainPatch(const Terrain& terrain);
+    TerrainPatch(const graphics::terrain::Terrain& terrain);
 
     size_t lod(const Camera& camera) const;
 
 };
 
+} // namespace terrain
+} // namespace graphics
 } // namespace coconutengine
 
 #endif /* TERRAINPATCH_HPP_ */

@@ -13,7 +13,7 @@
 #include <utility.hpp>
 #include <cmath>
 
-#include "terrain.hpp"
+#include "terrain/terrain.hpp"
 
 using namespace coconutengine;
 
@@ -44,7 +44,8 @@ Plane extractPlane(GLfloat matrix[], short row)
 
 } // anonymous namespace
 
-Camera::Camera(const Terrain& terrain, const Settings<std::string>& settings, const std::string& prefix) :
+Camera::Camera(const graphics::terrain::Terrain& terrain, const Settings<std::string>& settings,
+        const std::string& prefix) :
     terrain_(terrain),
     fov_(getSetting<float>(settings, prefix + ".fov")),
     nearPlane_(getSetting<float>(settings, prefix + ".near_plane")),

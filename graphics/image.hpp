@@ -24,16 +24,19 @@ class Image
 {
 public:
 
+    typedef std::vector<boost::uint8_t> Pixels;
+
     enum Format {
         RGB = GL_RGB,
         RGBA = GL_RGBA,
         GREYSCALE = (GL_RGB < GL_RGBA ? GL_RGBA : GL_RGB) + 1
     };
 
-    virtual ~Image() {}
+    virtual ~Image() {
+    }
 
-    const boost::uint8_t* pixels() const {
-        return &pixels_.front();
+    const Pixels& pixels() const {
+        return pixels_;
     }
 
     size_t width() const {
@@ -54,15 +57,16 @@ public:
 
 protected:
 
-    Image() {}
-
-    std::vector<boost::uint8_t> pixels_;
+    Pixels pixels_;
 
     size_t width_;
 
     size_t height_;
 
     Format format_;
+
+    Image() {
+    }
 
 };
 

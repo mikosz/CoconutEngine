@@ -5,9 +5,9 @@
 using namespace coconutengine;
 
 void SceneElement::render(const Camera& camera) const {
-#warning if(renderBoundingBox) ?
-
-    renderBoundingBox(camera);
+    if (drawBoundingBox_) {
+        renderBoundingBox(camera);
+    }
     this->doRender(camera);
 }
 

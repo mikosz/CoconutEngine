@@ -9,10 +9,11 @@
 #include "terrainpatch.hpp"
 #include "bitmap.hpp"
 #include "log.hpp"
+#include "settings.hpp"
 
 #include <stdexcept>
 
-using namespace coconutengine;
+using namespace coconutengine::graphics::terrain;
 
 namespace {
 
@@ -44,12 +45,19 @@ void setupIndexArrays(size_t minLod, std::vector<std::vector<GLuint> >& indexArr
 }  // anonymous namespace
 
 Terrain::Terrain(const Settings<std::string>& settings, const std::string& prefix) :
-    heightMap_(settings, prefix),
     texture_(Bitmap("grass.bmp"), Texture::TEXTURE_2D, Texture::LINEAR, Texture::MIPMAP_LINEAR),
-    lodStep_(getSetting<float> (settings, prefix + ".lod_step")) {
+    scale_(getSetting<float>(settings, prefix + ".scale")),
+    lodStep_(getSetting<float> (settings, prefix + ".lod_step")),
+    heightMap_(Bitmap(getSetting<std::string>(settings, prefix + ".heightmap")), scale_,
+        getSetting<float>(settings, prefix + ".height_scale")),
+    normalsMap_(heightMap_),
+    lightMap_(Bitmap(getSetting<std::string>(settings, prefix + ".lightmap")), scale_),
+    drawNormals_(getSetting<bool> (settings, prefix + ".draw_normals")),
+    drawBoundingBox_(getSetting<bool> (settings, prefix + ".draw_bounding_box")) {
+
     const size_t patchSize = getSetting<unsigned int> (settings, prefix + ".patch_size"),
-            heightMapHeight = heightMap_.data().height(),
-            heightMapWidth = heightMap_.data().width();
+            heightMapHeight = heightMap_.height(),
+            heightMapWidth = heightMap_.width();
 
     if ((heightMapHeight - 1) % (patchSize - 1) || (heightMapWidth - 1) % (patchSize - 1)) {
         throw std::runtime_error("Height map dimentions are not divisible by patchSize");
@@ -59,12 +67,14 @@ Terrain::Terrain(const Settings<std::string>& settings, const std::string& prefi
         for (size_t col = 0; col < heightMapWidth - 1; col += patchSize - 1) {
             boost::shared_ptr<TerrainPatch> current(TerrainPatch::create(*this));
             patches_.push_back(current);
-            std::pair<HeightMap::Container::Iterator, HeightMap::Container::Iterator> rangeIt =
-                    heightMap_.data().range(row, col, row + patchSize, col + patchSize);
+            std::pair<HeightMap::Iterator, HeightMap::Iterator> rangeIt = heightMap_.range(row, col, row
+                    + patchSize, col + patchSize);
             for (; rangeIt.first != rangeIt.second; ++rangeIt.first) {
                 TerrainPatch::Vertex vertex;
-                vertex.normal = rangeIt.first->normal;
-                vertex.position = rangeIt.first->vertex;
+                vertex.position = *rangeIt.first;
+                vertex.normal = normalsMap_(rangeIt.first.row() + row, rangeIt.first.column() + col);
+                float brightness = lightMap_(rangeIt.first.row() + row, rangeIt.first.column() + col);
+                vertex.brightness = Vec3D(brightness, brightness, brightness);
                 current->addVertex(vertex);
             }
         }

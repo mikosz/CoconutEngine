@@ -143,10 +143,10 @@ const char LOG_CONTEXT__[] = "NO_CONTEXT";
         }                                                       \
     }
 
-#define LOG_TRACE LOG(LogLevel::TRACE, "[TRACE] ")
-#define LOG_DEBUG LOG(LogLevel::DEBUG, "[DEBUG] ")
-#define LOG_INFO LOG(LogLevel::INFO, "[INFO] ")
-#define LOG_WARN LOG(LogLevel::WARN, "[WARN] ")
-#define LOG_ERROR LOG(LogLevel::ERROR, "[ERROR] ")
+#define LOG_TRACE LOG(coconutengine::LogLevel::TRACE, "[TRACE] ")
+#define LOG_DEBUG LOG(coconutengine::LogLevel::DEBUG, "[DEBUG] ")
+#define LOG_INFO LOG(coconutengine::LogLevel::INFO, "[INFO] ")
+#define LOG_WARN LOG(coconutengine::LogLevel::WARN, "[WARN] ")
+#define LOG_ERROR LOG(coconutengine::LogLevel::ERROR, "[ERROR] ")
 
 #endif /* LOG_HPP_ */

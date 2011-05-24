@@ -1,10 +1,3 @@
-/*
- * terrain.hpp
- *
- *  Created on: Dec 1, 2008
- *      Author: mikosz
- */
-
 #ifndef TERRAIN_HPP_
 #define TERRAIN_HPP_
 
@@ -19,10 +12,16 @@
 #include "vector.hpp"
 #include "texture.hpp"
 #include "heightmap.hpp"
+#include "normalsmap.hpp"
+#include "lightmap.hpp"
 
 namespace coconutengine {
 
 template <class > class Settings;
+
+namespace graphics {
+namespace terrain {
+
 
 class Terrain {
 public:
@@ -49,9 +48,15 @@ public:
         return heightMap_;
     }
 
-private:
+    bool drawNormals() const {
+        return drawNormals_;
+    }
 
-    HeightMap heightMap_;
+    bool drawBoundingBox() const {
+        return drawBoundingBox_;
+    }
+
+private:
 
     Texture texture_;
 
@@ -61,10 +66,24 @@ private:
 
     std::vector<boost::shared_ptr<TerrainPatch> > patches_;
 
+    float scale_;
+
     float lodStep_;
+
+    HeightMap heightMap_;
+
+    NormalsMap normalsMap_;
+
+    LightMap lightMap_;
+
+    bool drawNormals_;
+
+    bool drawBoundingBox_;
 
 };
 
+} // namespace terrain
+} // namespace graphics
 } // namespace coconutengine
 
 #endif /* TERRAIN_HPP_ */

@@ -55,11 +55,11 @@ void Texture::load(const Image& image) const {
     switch (dimensionality_) {
     case TEXTURE_1D:
         glTexImage1D(dimensionality_, 0, image.format(), image.width(), 0, image.format(), GL_UNSIGNED_BYTE,
-                image.pixels());
+                !image.pixels().empty() ? &image.pixels().front() : 0);
         break;
     case TEXTURE_2D:
         glTexImage2D(dimensionality_, 0, image.format(), image.width(), image.height(), 0, image.format(),
-                GL_UNSIGNED_BYTE, image.pixels());
+                GL_UNSIGNED_BYTE, !image.pixels().empty() ? &image.pixels().front() : 0);
         break;
     default:
         throw std::runtime_error("Invalid texture dimensionality");

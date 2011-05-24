@@ -12,8 +12,12 @@
 #include <string>
 #include <frustum.hpp>
 
-namespace coconutengine
-{
+namespace coconutengine {
+namespace graphics {
+namespace terrain {
+class Terrain;
+} // namespace terrain
+} // namespace graphics
 
 template <class> class Settings;
 class Terrain;
@@ -22,7 +26,8 @@ class Camera
 {
 public:
 
-    Camera(const Terrain& terrain, const Settings<std::string>& settings, const std::string& prefix);
+    Camera(const graphics::terrain::Terrain& terrain, const Settings<std::string>& settings,
+            const std::string& prefix);
 
     Vec3D& position() { return position_; }
 
@@ -48,7 +53,7 @@ public:
 
 private:
 
-    const Terrain& terrain_;
+    const graphics::terrain::Terrain& terrain_;
 
     float fov_;
 

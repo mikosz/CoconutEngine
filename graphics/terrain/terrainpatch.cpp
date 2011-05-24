@@ -8,16 +8,36 @@
 #include "terrainpatch.hpp"
 
 #include <cassert>
+#include <algorithm>
+
+#include <boost/bind.hpp>
 
 #include <GL/gl.h>
 
 #include "camera.hpp"
 #include "colour.hpp"
-#include "terrain.hpp"
+#include "terrain/terrain.hpp"
 #include "renderpipeline.hpp"
 #include "log.hpp"
 
-using namespace coconutengine;
+using namespace coconutengine::graphics::terrain;
+
+namespace {
+
+void renderNormal(const TerrainPatch::Vertex& vertex) {
+    glVertex3fv(vertex.position.toXYZ());
+    coconutengine::Vec3D end = vertex.position + (vertex.normal * 100);
+    glVertex3fv(end.toXYZ());
+}
+
+void renderNormals(const std::vector<TerrainPatch::Vertex>& vertices) {
+    glBegin(GL_LINES);
+    glColor3fv(coconutengine::Colour::RED.toRGBA());
+    std::for_each(vertices.begin(), vertices.end(), boost::bind(renderNormal, _1));
+    glEnd();
+}
+
+} // anonymous namespace
 
 boost::shared_ptr<TerrainPatch> TerrainPatch::create(const Terrain& terrain) {
     boost::shared_ptr<TerrainPatch> result(new TerrainPatch(terrain));
@@ -26,7 +46,8 @@ boost::shared_ptr<TerrainPatch> TerrainPatch::create(const Terrain& terrain) {
 }
 
 TerrainPatch::TerrainPatch(const Terrain& terrain) :
-    terrain_(terrain) {
+        coconutengine::SceneElement(terrain.drawBoundingBox()),
+        terrain_(terrain) {
 }
 
 void TerrainPatch::addVertex(const Vertex& vertex) {
@@ -50,19 +71,19 @@ void TerrainPatch::doRender(const Camera& camera) const {
     glFogf(GL_FOG_DENSITY, 1.0f);
     glFogfv(GL_FOG_COLOR, Colour::WHITE.toRGBA());
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, Colour(0.4f, 0.4f, 0.4f, 1.0f).toRGBA());
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, Colour(0.2f, 0.2f, 0.2f, 1.0f).toRGBA());
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, Colour::BLACK.toRGBA());
+    glDisable(GL_LIGHTING);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
     terrain_.texture().enable();
     terrain_.texture().bind();
     glVertexPointer(3, GL_FLOAT, sizeof(Vertex), &vertices_.front().position);
     glNormalPointer(GL_FLOAT, sizeof(Vertex), &vertices_.front().normal);
     glTexCoordPointer(2, GL_FLOAT, 0, &terrain_.textureCoordArray().front());
+    glColorPointer(3, GL_FLOAT, sizeof(Vertex), &vertices_.front().brightness);
 
     size_t level = lod(camera);
     glDrawElements(GL_TRIANGLE_STRIP, terrain_.indexArray(level).size(), GL_UNSIGNED_INT,
@@ -70,10 +91,15 @@ void TerrainPatch::doRender(const Camera& camera) const {
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 
     glDisable(GL_FOG);
 
     terrain_.texture().disable();
+
+    if (terrain_.drawNormals()) {
+        renderNormals(vertices_);
+    }
 }
 
 size_t TerrainPatch::lod(const Camera& camera) const {

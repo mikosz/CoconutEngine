@@ -14,6 +14,7 @@ using namespace coconutengine;
 
 const Colour Colour::WHITE(1.0f, 1.0f, 1.0f, 1.0f);
 const Colour Colour::BLACK(0.0f, 0.0f, 0.0f, 1.0f);
+const Colour Colour::RED(1.0f, 0.0f, 0.0f, 1.0f);
 
 Colour::Colour(float red, float green, float blue, float alpha)
 {

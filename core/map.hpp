@@ -9,7 +9,7 @@
 #define MAP_HPP_
 
 #include <string>
-#include <terrain.hpp>
+#include <terrain/terrain.hpp>
 #include <boost/scoped_ptr.hpp>
 
 namespace coconutengine
@@ -24,13 +24,13 @@ public:
 
     Map(const Settings<std::string>& settings, const std::string& prefix);
 
-    const Terrain& terrain() const {
+    const graphics::terrain::Terrain& terrain() const {
         return terrain_;
     }
 
 private:
 
-    Terrain terrain_;
+    graphics::terrain::Terrain terrain_;
 
 };
 

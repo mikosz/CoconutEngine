@@ -23,6 +23,8 @@ public:
 
     static const Colour BLACK;
 
+    static const Colour RED;
+
     Colour(float red, float green, float blue, float alpha);
 
     Colour(float rgba[]);
